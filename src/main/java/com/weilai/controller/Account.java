@@ -71,4 +71,30 @@ public class Account
         response.getWriter().write("{\"result\":\""+ 0 +"\"}");
     }
   }
+  
+  @RequestMapping({"/loginUser"})
+  public void loginUser(RegistForm registForm, HttpServletResponse response) throws IOException
+  {
+    LogDto ld = new LogDto();
+    ld.setClassName(getClass().getName());
+    ld.setMessageId("R000001");
+    ld.setMessageContext("Email:" + registForm.getEmail());
+    ld.setLogInfo("[login]");
+    this.logOutput.printLog(ld);
+    User user = this.accountService.getUserByEmailId(registForm.getEmail());
+   
+    if(user !=null){
+	   try {	
+		   if(user.getsUserPassword().equals(SHAUtil.shaEncode(registForm.getPass()))){
+			   response.getWriter().write("{\"result\":\""+ 1 +"\"}");
+		   }
+		
+	   } catch (Exception e) {	
+		e.printStackTrace();
+	   }
+    }
+    
+    response.getWriter().write("{\"result\":\""+ 0 +"\"}");
+    
+  }
 }

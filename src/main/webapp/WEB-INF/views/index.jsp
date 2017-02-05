@@ -171,10 +171,7 @@
     <script src="assets/js/bootstrap.min.js"></script> 
 	<script src="assets/js/custom.js"></script>
     <script>
-    $(function(){
-
-
-    	
+    $(function(){	
 			$('#login_a').click(function () {			
 				
 				$('#login').dialog('open');
@@ -193,21 +190,77 @@
 					}
 				}
 				}).validate({
+					submitHandler : function (form) {
+						
+						$(form).ajaxSubmit({
+							url : 'loginUser',
+							type : 'POST',
+								beforeSubmit : function (formData, jqForm, options) {
+									//$('#reg').find('button').button('disable');
+									//$('#reg').close();
+								},
+								success : function (responseText, statusText) {
+									if (responseText) {
+										//$('#reg').dialog('widget').find('button').eq(1).button('enable');
+										//$('#loading').css('background', 'url(img/success.gif) no-repeat 20px center').html('数据新增成功...');
+										//$.cookie('user', $('#user').val());
+										setTimeout(function () {
+											//$('#loading').dialog('close');
+											$('#reg').dialog('close');
+											$('#reg').resetForm();
+											//$('#reg span.star').html('*').removeClass('succ');
+											//$('#loading').css('background', 'url(img/loading.gif) no-repeat 20px center').html('数据交互中...');
+											//$('#member, #logout').show();
+											$('#reg_a, #login_a').hide();
+											//$('#member').html($.cookie('user'));
+										}, 1000);
+									}
+								},
+						});
+					},
+					showErrors : function (errorMap, errorList) {
+						var errors = this.numberOfInvalids();
+						
+						if (errors > 0) {
+							$('#login').dialog('option', 'height', errors * 20 + 540);
+						} else {
+							$('#login').dialog('option', 'height', 260);
+						}
+						
+						this.defaultShowErrors();
+					},
+					
+					highlight : function (element, errorClass) {
+						$(element).css('border', '1px solid #630');
+						$(element).parent().find('span').html('*').removeClass('succ');
+					},
+					
+					unhighlight : function (element, errorClass) {
+						$(element).css('border', '1px solid #ccc');
+						$(element).parent().find('span').html('&nbsp;').addClass('succ');
+					},
+				
+					errorLabelContainer : 'ol.reg_error',
+					wrapper : 'li',
+				
 					rules : {
 						login_user : {
 							required : true,
-							minlength : 2,
-							remote : {
-								url : 'welcome',
-								type : 'POST',
-								data : {function(){return $("#login_user").val();}}
-							},
+							minlength : 2
+						},
+						login_pass : {
+							required : true,
+							minlength : 6
 						},
 					},
 					messages : {
 						login_user : {
 							required : '帐号不得为空！',
-							minlength : $.validator.format('帐号不得小于{0}位！'),
+							minlength : $.validator.format('帐号不得小于{0}位！')
+						},
+						login_pass : {
+							required : '密码不得为空！',
+							minlength : $.validator.format('密码不得小于{0}位！')
 						}
 					}
 				});
@@ -237,6 +290,23 @@
 					beforeSubmit : function (formData, jqForm, options) {
 						//$('#reg').find('button').button('disable');
 						//$('#reg').close();
+					},
+					success : function (responseText, statusText) {
+						if (responseText) {
+							//$('#reg').dialog('widget').find('button').eq(1).button('enable');
+							//$('#loading').css('background', 'url(img/success.gif) no-repeat 20px center').html('数据新增成功...');
+							//$.cookie('user', $('#user').val());
+							setTimeout(function () {
+								//$('#loading').dialog('close');
+								$('#reg').dialog('close');
+								$('#reg').resetForm();
+								//$('#reg span.star').html('*').removeClass('succ');
+								//$('#loading').css('background', 'url(img/loading.gif) no-repeat 20px center').html('数据交互中...');
+								//$('#member, #logout').show();
+								$('#reg_a, #login_a').hide();
+								//$('#member').html($.cookie('user'));
+							}, 1000);
+						}
 					},
 			});
 		},
